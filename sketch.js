@@ -1,27 +1,39 @@
-var slider;
-
-var data = [13,245,11,2,3,16,55];
+var data = [];
+var ready = false;
 
 function setup() {
   createCanvas(800, 600);
 
-  slider = createSlider(0, 250);
-  slider.position(100, 100);
-
+  d3.csv("ages.csv", function (d) {
+    return {
+      name: d.name,
+      age: +d.age
+    };
+  }).then(function (csv) {
+    data = csv;
+    ready = true;
+  });
 }
 
 function draw() {
 
-  background(255);
+  if (!ready) {
+    background(255, 0, 0);
+    return;
+  } else {
+    background(255);
+  }
 
-  text(slider.value(),200,200);
-
-  var threshold = slider.value();
-
+  //get all the people who are younger than 50
   var selection = data.filter(function(d){
-    return d<threshold;
-  }); 
+    return d.age < 50;
+  });
 
-  console.log(selection);
+
+  for (var i = 0; i < selection.length; i++) {
+    var d = selection[i];
+    var y = 50 + i*20;
+    text(d.name + ' ' + d.age,100,y);
+  }
 
 }
